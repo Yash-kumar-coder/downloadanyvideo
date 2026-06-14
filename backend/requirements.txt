@@ -1,6 +1,7 @@
 fastapi==0.104.0
 uvicorn==0.23.2
-yt-dlp
+yt-dlp==2025.2.19
 sse-starlette==1.6.5
 pydantic==2.4.2
+imageio-ffmpeg==0.6.0
 urllib3==2.0.7

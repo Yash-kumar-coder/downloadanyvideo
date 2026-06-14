@@ -1,8 +1,10 @@
 import os
 import yt_dlp
 import asyncio
+import glob
 from job_manager import update_job
 import tempfile
+import imageio_ffmpeg
 
 DOWNLOAD_DIR = os.path.join(tempfile.gettempdir(), "downloader_app_files")
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
@@ -12,15 +14,15 @@ def download_video(job_id: str, url: str, platform: str, quality: str):
         # Note: If a 'cookies.txt' file exists in the current directory, we can use it to bypass restrictions on FB/IG/Pinterest.
         # It should be placed in the backend root directory.
         
-        format_str = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
+        format_str = 'bestvideo+bestaudio/best'
         if quality == '1080p':
-            format_str = 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best'
+            format_str = 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best'
         elif quality == '720p':
-            format_str = 'bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best'
+            format_str = 'bestvideo[height<=720]+bestaudio/best[height<=720]/best'
         elif quality == '480p':
-            format_str = 'bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best'
+            format_str = 'bestvideo[height<=480]+bestaudio/best[height<=480]/best'
         elif quality == '360p':
-            format_str = 'bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best'
+            format_str = 'bestvideo[height<=360]+bestaudio/best[height<=360]/best'
         elif quality == 'audio':
             format_str = 'bestaudio/best'
         
@@ -43,9 +45,9 @@ def download_video(job_id: str, url: str, platform: str, quality: str):
             'format': format_str,
             'outtmpl': out_tmpl,
             'progress_hooks': [progress_hook],
-            'merge_output_format': 'mp4' if quality != 'audio' else None,
             'quiet': True,
             'no_warnings': True,
+            'ffmpeg_location': imageio_ffmpeg.get_ffmpeg_exe(),
         }
 
         if quality == 'audio':
