@@ -48,6 +48,7 @@ def download_video(job_id: str, url: str, platform: str, quality: str):
             'quiet': True,
             'no_warnings': True,
             'ffmpeg_location': imageio_ffmpeg.get_ffmpeg_exe(),
+            'extractor_args': {'youtube': {'player_client': ['android', 'web']}}
         }
 
         if quality == 'audio':
@@ -58,7 +59,10 @@ def download_video(job_id: str, url: str, platform: str, quality: str):
             }]
 
         if os.path.exists("cookies.txt"):
+            print("SUCCESS: Found cookies.txt file! Applying to yt-dlp.")
             ydl_opts["cookiefile"] = "cookies.txt"
+        else:
+            print("WARNING: cookies.txt file NOT found in the current directory.")
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
